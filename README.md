@@ -1,5 +1,3 @@
-当然需要更新！以下是更新后的完整说明文档，所有链接和安装命令都已更正为你的实际 GitHub 地址：
-
 # 1kwp-debian - Debian 12 一键 WordPress 安装脚本
 
 🚀 **一行命令，为 Debian 12 服务器自动完成 WordPress 全环境安装**
