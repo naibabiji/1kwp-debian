@@ -10,6 +10,61 @@
 # 获取脚本目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# ============================================
+# 远程安装引导逻辑
+# ============================================
+# 如果本地找不到依赖库（说明是curl运行或文件缺失），则自动拉取仓库
+if [ ! -f "$SCRIPT_DIR/lib/common.sh" ] || [ ! -f "$SCRIPT_DIR/lib/validation.sh" ]; then
+    echo "检测到远程运行模式，正在准备安装环境..."
+    
+    # 检查是否为 root 用户
+    if [ "$(id -u)" != "0" ]; then
+        echo "❌ 错误: 本脚本需要 root 权限运行"
+        echo "请使用: sudo bash $0 $@"
+        exit 1
+    fi
+
+    # 安装 git (如果不存在)
+    if ! command -v git &> /dev/null; then
+        echo "正在安装 Git..."
+        if [ -f /etc/debian_version ]; then
+            apt-get update -qq
+            apt-get install -y -qq git
+        elif [ -f /etc/redhat-release ]; then
+            yum install -y -q git
+        else
+            echo "❌ 无法自动安装 Git，请手动安装后重试"
+            exit 1
+        fi
+    fi
+
+    # 创建临时目录
+    INSTALL_DIR="/tmp/1kwp-installer-$(date +%s)"
+    echo "正在克隆安装脚本到: $INSTALL_DIR"
+    
+    # 克隆仓库
+    git clone --depth=1 https://github.com/naibabiji/1kwp-debian.git "$INSTALL_DIR"
+    
+    if [ ! -d "$INSTALL_DIR" ]; then
+        echo "❌ 克隆仓库失败，请检查网络连接"
+        exit 1
+    fi
+
+    # 赋予执行权限并运行
+    echo "正在启动安装程序..."
+    chmod +x "$INSTALL_DIR/install.sh"
+    
+    # 传递所有参数给新脚本
+    exec "$INSTALL_DIR/install.sh" "$@"
+    
+    # 正常情况下不会执行到这里
+    exit 0
+fi
+
+# ============================================
+# 本地运行逻辑
+# ============================================
+
 # 加载配置和库
 source "$SCRIPT_DIR/config.sh"
 source "$SCRIPT_DIR/lib/common.sh"
