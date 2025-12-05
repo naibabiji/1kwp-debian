@@ -26,11 +26,6 @@ install_wordpress() {
     tar -xzf /tmp/latest.tar.gz --strip-components=1
     rm -f /tmp/latest.tar.gz
     
-    # 设置文件权限
-    chown -R www-data:www-data "$WEB_ROOT"
-    find "$WEB_ROOT" -type d -exec chmod 755 {} \;
-    find "$WEB_ROOT" -type f -exec chmod 644 {} \;
-    
     # 生成安全密钥
     ADMIN_PASSWORD=$(generate_random_password 16)
     local auth_keys=$(download_file "https://api.wordpress.org/secret-key/1.1/salt/" "-")
@@ -109,6 +104,12 @@ EOF
     
     # 设置固定链接
     /usr/local/bin/wp rewrite structure '/%postname%/' --hard --allow-root 2>> "$INSTALL_LOG"
+    
+    # 最后统一设置文件权限 (修复可能因root运行WP-CLI导致的权限问题)
+    log_info "设置文件权限..."
+    chown -R www-data:www-data "$WEB_ROOT"
+    find "$WEB_ROOT" -type d -exec chmod 755 {} \;
+    find "$WEB_ROOT" -type f -exec chmod 644 {} \;
     
     log_success "WordPress 安装完成"
     log_info "管理员用户名: $ADMIN_USER"
