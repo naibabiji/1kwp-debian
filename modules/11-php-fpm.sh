@@ -35,6 +35,12 @@ configure_php_fpm() {
     sed -i "s/^pm.max_spare_servers = .*/pm.max_spare_servers = ${pm_max_spare_servers}/" "$php_conf"
     sed -i "s/^pm.max_requests = .*/pm.max_requests = 500/" "$php_conf"
     
+    # 确保运行用户为 www-data
+    sed -i "s/^;*user = .*/user = www-data/" "$php_conf"
+    sed -i "s/^;*group = .*/group = www-data/" "$php_conf"
+    sed -i "s/^;*listen.owner = .*/listen.owner = www-data/" "$php_conf"
+    sed -i "s/^;*listen.group = .*/listen.group = www-data/" "$php_conf"
+    
     # 增加PHP内存限制
     sed -i "s/^;*memory_limit = .*/memory_limit = 256M/" "$php_ini"
     sed -i "s/^;*max_execution_time = .*/max_execution_time = 300/" "$php_ini"
