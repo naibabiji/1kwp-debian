@@ -14,7 +14,8 @@
 - ⚡ **PHP 8.3** - WordPress 官方推荐版本
 - 💾 **内存优化** - 自动检测并优化低内存VPS
 - 📦 **模块化** - 易于维护和扩展
-- 🐛 **内置探针** - 内置https://github.com/kmvan/x-prober 探针，方便了解服务器信息
+- ✨ **PHP探针** - 自动安装x-prober，随机文件名增强安全
+
 
 ## 📋 系统要求
 
@@ -26,30 +27,72 @@
 
 ## 🚀 快速安装
 
-### 方法一：克隆仓库
+### 方法一：一键命令（推荐小白用户）
+
+只需复制下面的命令，粘贴到服务器终端，按回车即可开始安装。
+
+**⚠️ 使用前请修改命令中的两个地方：**
+- `your@email.com` → 换成你的邮箱（用于SSL证书通知）
+- `yourdomain.com` → 换成你的域名
+
+**📋 完整命令：**
 
 ```bash
-# 克隆仓库
-git clone https://github.com/naibabiji/1kwp-debian.git
-cd 1kwp-debian
-
-# 给予执行权限并运行
-chmod +x install.sh
-./install.sh your@email.com yourdomain.com
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- your@email.com yourdomain.com
 ```
 
-### 方法二：一键命令
+**📝 实际示例（直接复制可用）：**
 
-# 下载并直接运行
+假设你的邮箱是 `admin@vps17.com`，域名是 `vps17.com`：
+
 ```bash
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- [你的邮箱] [域名]
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@vps17.com vps17.com
 ```
-使用前记得将命令中邮箱和域名更换为你自己的，多个域名按空格隔开。
 
 ### 多域名安装
 
+域名之间用空格隔开，可以添加多个。
+
+**📌 场景1：主域名 + www（最常用）**
+
+同时绑定 `example.com` 和 `www.example.com`：
+
 ```bash
-./install.sh your@email.com domain.com www.domain.com blog.domain.com
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@example.com example.com www.example.com
+```
+
+**📌 场景2：添加子域名**
+
+添加子域名如 `blog.example.com`、`shop.example.com`：
+
+```bash
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@example.com example.com www.example.com blog.example.com
+```
+
+**📌 场景3：多个子域名**
+
+一次性添加多个子域名：
+
+```bash
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@example.com example.com www.example.com blog.example.com shop.example.com api.example.com
+```
+
+> 💡 **提示**：请确保所有域名都已解析到你的服务器IP地址，否则SSL证书申请会失败。
+
+---
+
+### 方法二：克隆仓库（适合开发者）
+
+**第一步：克隆仓库**
+```bash
+git clone https://github.com/naibabiji/1kwp-debian.git
+cd 1kwp-debian
+```
+
+**第二步：运行安装脚本**
+```bash
+chmod +x install.sh
+./install.sh your@email.com yourdomain.com
 ```
 
 ##  项目结构
@@ -61,11 +104,12 @@ apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.gith
 ├── lib/               # 公共库
 │   ├── common.sh     # 公共函数
 │   └── validation.sh # 验证函数
-├── modules/          # 功能模块（16个）
+├── modules/          # 功能模块（17个）
 │   ├── 01-dependencies.sh
 │   ├── 02-system-check.sh
 │   ├── ...
-│   └── 16-optimize.sh
+│   ├── 16-optimize.sh
+│   └── 17-prober.sh   # PHP探针安装
 └── scripts/          # 辅助脚本
     └── pack.sh      # 打包脚本
 ```
@@ -86,8 +130,9 @@ apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.gith
 12. ✅ 配置 Nginx
 13. ✅ 安装 WordPress
 14. ✅ 配置站点
-15. ✅ 申请 SSL 证书
-16. ✅ 安装后优化
+15. ✅ 安装 PHP 探针
+16. ✅ 申请 SSL 证书
+17. ✅ 安装后优化
 
 ## 📝 安装后
 
@@ -97,6 +142,7 @@ apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.gith
 - **后台地址**: https://yourdomain.com/wp-admin
 - **管理员账号**: 域名主体（如 vps17）
 - **管理员密码**: 随机生成（保存在 `/root/域名_installation_info.txt`）
+- **PHP探针**: https://yourdomain.com/tz随机字符.php
 
 ## 软件安装目录与配置
 
@@ -110,7 +156,38 @@ apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.gith
 | **PHP 8.3** | FPM配置 | `/etc/php/8.3/fpm/pool.d/www.conf` |
 | | php.ini | `/etc/php/8.3/fpm/php.ini` |
 | **MariaDB** | 配置文件 | `/etc/mysql/mariadb.conf.d/60-wordpress-optimization.cnf` |
+| **PHP探针** | 探针文件 | `/var/www/yourdomain.com/tz*.php` |
 | **安装信息** | 账号密码 | `/root/yourdomain.com_installation_info.txt` |
+
+## 🔍 PHP探针 (x-prober)
+
+安装脚本会自动部署 [x-prober](https://github.com/kmvan/x-prober) PHP探针，方便查看服务器状态。
+
+### 访问方式
+
+探针地址格式：`https://yourdomain.com/tz随机字符.php`
+
+具体地址保存在 `/root/yourdomain.com_installation_info.txt` 文件中。
+
+### ⚠️ 安全警告
+
+> **探针会暴露服务器敏感信息**（PHP版本、扩展列表、系统配置等），可能被攻击者利用！
+
+**建议**：查看完服务器信息后，立即删除探针文件：
+
+```bash
+# 查看探针文件名（在安装信息文件中）
+grep "探针" /root/yourdomain.com_installation_info.txt
+
+# 删除探针文件
+rm -f /var/www/yourdomain.com/tz*.php
+```
+
+### 防护措施
+
+本脚本采用以下安全措施：
+- 使用随机文件名（`tz` + 8位随机字符），难以被猜测
+- 探针地址仅保存在权限为600的root专属文件中
 
 ## 🔐 SSL 证书续期
 
@@ -170,5 +247,3 @@ MIT License
 ## ⚠️ 免责声明
 
 本脚本仅供学习和测试使用，生产环境请自行评估风险。
-
-
