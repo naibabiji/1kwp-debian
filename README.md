@@ -40,8 +40,8 @@ chmod +x install.sh
 
 ### 方法二：一键命令
 
-```bash
 # 下载并直接运行
+```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh) your@email.com yourdomain.com
 ```
 
