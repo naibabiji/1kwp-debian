@@ -27,59 +27,29 @@
 
 ## 🚀 快速安装
 
-### 方法一：一键命令（推荐小白用户）
+### 方法一：一键命令（推荐）
 
-只需复制下面的命令，粘贴到服务器终端，按回车即可开始安装。
+复制下面的命令，粘贴到服务器终端，按回车即可开始安装。
 
-**⚠️ 使用前请修改命令中的两个地方：**
-- `your@email.com` → 换成你的邮箱（用于SSL证书通知）
-- `yourdomain.com` → 换成你的域名
+**⚠️ 使用前请修改以下内容：**
 
-**📋 完整命令：**
+| 占位符 | 替换为 | 示例 |
+|--------|--------|------|
+| `your@email.com` | 你的邮箱 | `admin@example.com` |
+| `yourdomain.com` | 你的主域名 | `example.com` |
+| `www.yourdomain.com` | 你的www域名 | `www.example.com` |
 
-```bash
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- your@email.com yourdomain.com
-```
-
-**📝 实际示例（直接复制可用）：**
-
-假设你的邮箱是 `admin@vps17.com`，域名是 `vps17.com`：
+**📋 安装命令（主域名 + www）：**
 
 ```bash
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@vps17.com vps17.com
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- your@email.com yourdomain.com www.yourdomain.com
 ```
 
-### 多域名安装
+> 💡 **提示**：
+> - 如只需绑定一个域名，删除 `www.yourdomain.com` 即可
+> - 如需添加更多子域名，在命令末尾用空格隔开继续添加（如 `blog.yourdomain.com`）
+> - 请确保所有域名都已解析到服务器IP，否则SSL证书申请会失败
 
-域名之间用空格隔开，可以添加多个。
-
-**📌 场景1：主域名 + www（最常用）**
-
-同时绑定 `example.com` 和 `www.example.com`：
-
-```bash
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@example.com example.com www.example.com
-```
-
-**📌 场景2：添加子域名**
-
-添加子域名如 `blog.example.com`、`shop.example.com`：
-
-```bash
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@example.com example.com www.example.com blog.example.com
-```
-
-**📌 场景3：多个子域名**
-
-一次性添加多个子域名：
-
-```bash
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- admin@example.com example.com www.example.com blog.example.com shop.example.com api.example.com
-```
-
-> 💡 **提示**：请确保所有域名都已解析到你的服务器IP地址，否则SSL证书申请会失败。
-
----
 
 ### 方法二：克隆仓库（适合开发者）
 
