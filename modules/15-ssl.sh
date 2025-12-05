@@ -17,15 +17,6 @@ request_ssl_certificate() {
     
     if certbot --nginx --agree-tos --no-eff-email --email "$EMAIL" $certbot_domains --non-interactive --redirect 2>> "$INSTALL_LOG"; then
         log_success "SSL 证书申请成功"
-        
-        # 测试自动续期（添加超时限制，避免卡住）
-        log_info "测试SSL证书自动续期..."
-        if timeout 60 certbot renew --dry-run 2>>"$INSTALL_LOG"; then
-            log_success "SSL 证书自动续期测试通过"
-        else
-            log_warning "SSL 证书自动续期测试跳过（超时或失败），证书已正常安装"
-        fi
-        
         return 0
     else
         log_warning "SSL 证书申请失败，网站将以HTTP运行"
