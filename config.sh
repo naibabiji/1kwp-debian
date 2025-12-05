@@ -25,6 +25,8 @@ AVAILABLE_SPACE_GB=0
 APPLY_OPTIMIZATION=false
 INSTALL_START_TIME=$(date +%s)
 INSTALL_LOG="/tmp/wp-install-$(date +%Y%m%d-%H%M%S).log"
+PROBER_FILENAME=""    # PHP探针文件名
+PROBER_PATH=""        # PHP探针完整路径
 
 # 安装步骤总数
 TOTAL_STEPS=15
