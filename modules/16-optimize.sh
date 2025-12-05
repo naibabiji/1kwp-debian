@@ -70,6 +70,12 @@ CPU核心: ${CPU_CORES}
 总内存: ${TOTAL_MEM_GB}GB
 
 安装日志: ${INSTALL_LOG}
+
+=== PHP探针信息 ===
+探针地址: https://${MAIN_DOMAIN}/${PROBER_FILENAME:-未安装}
+探针文件: ${PROBER_PATH:-未安装}
+⚠️ 安全提示: 探针会暴露服务器信息，不使用时请删除
+  删除命令: rm -f ${PROBER_PATH:-/path/to/prober.php}
 ========================================
 EOF
     
@@ -106,4 +112,13 @@ show_installation_summary() {
     echo ""
     echo "📄 完整安装信息已保存到: /root/${MAIN_DOMAIN}_installation_info.txt"
     echo ""
+    
+    # 显示探针信息（如果已安装）
+    if [ -n "$PROBER_FILENAME" ] && [ -f "$PROBER_PATH" ]; then
+        echo "=== 🔍 PHP探针 ==="
+        echo "📊 探针地址: https://${MAIN_DOMAIN}/${PROBER_FILENAME}"
+        echo "⚠️  安全提示: 不使用时请删除探针文件"
+        echo "   删除命令: rm -f ${PROBER_PATH}"
+        echo ""
+    fi
 }
