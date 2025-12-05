@@ -38,23 +38,25 @@
 - **网络**：域名已指向服务器 IP（脚本会严格检查）
 
 ### 安装命令
-```bash
 # 使用 curl（推荐）
+```bash
 bash <(curl -s https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/1kwp-debian.sh) 你的邮箱 你的主域名 [其他域名...]
-
+```
 # 使用 wget
+```bash
 bash <(wget -qO- https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/1kwp-debian.sh) 你的邮箱 你的主域名 [其他域名...]
 ```
-
 ### 使用示例
-```bash
 # 单域名安装（管理员账号：example）
+```bash
 bash <(curl -s https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/1kwp-debian.sh) admin@example.com example.com
-
+```
 # 多域名安装（绑定主域名和 www）
+```bash
 bash <(curl -s https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/1kwp-debian.sh) admin@example.com example.com www.example.com
-
+```
 # 复杂域名安装（绑定多个子域名）
+```bash
 bash <(curl -s https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/1kwp-debian.sh) admin@company.com company.com www.company.com shop.company.com blog.company.com
 ```
 
