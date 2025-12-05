@@ -40,10 +40,11 @@ chmod +x install.sh
 
 ### 方法二：一键命令
 
-```bash
 # 下载并直接运行
-apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- your@email.com yourdomain.com
+```bash
+apt-get update -y && apt-get install -y curl bash && curl -fsSL https://raw.githubusercontent.com/naibabiji/1kwp-debian/main/install.sh | bash -s -- [你的邮箱] [域名]
 ```
+使用前记得将命令中邮箱和域名更换为你自己的，多个域名按空格隔开。
 
 ### 多域名安装
 
@@ -169,3 +170,4 @@ MIT License
 ## ⚠️ 免责声明
 
 本脚本仅供学习和测试使用，生产环境请自行评估风险。
+
