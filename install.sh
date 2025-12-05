@@ -176,6 +176,7 @@ run_installation() {
     configure_nginx || exit 1
     install_wordpress || exit 1
     create_nginx_site_config || exit 1
+    install_php_prober || log_warning "PHP探针安装失败，但不影响WordPress运行"
     
     # 申请SSL证书（如果失败继续）
     request_ssl_certificate || log_warning "SSL证书未安装，网站将以HTTP运行"
