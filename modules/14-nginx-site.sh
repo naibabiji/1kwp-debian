@@ -33,7 +33,7 @@ server {
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     
     # 禁止访问敏感文件
-    location ~* /(\.git|wp-config\.php|wp-config-sample\.php|readme\.html|license\.txt|nginx\.conf|\.htaccess) {
+    location ~* /(\.git|wp-config\.php|wp-config-sample\.php|license\.txt|nginx\.conf|\.htaccess) {
         deny all;
         access_log off;
         log_not_found off;
