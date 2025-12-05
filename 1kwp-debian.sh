@@ -443,9 +443,53 @@ check_dns_resolution() {
     return 0
 }
 
+# 添加PHP 8.3仓库（Sury）
+add_php_repository() {
+    log_step 7 15 "配置PHP 8.3仓库"
+    
+    # 检查是否已添加仓库
+    if [ -f /etc/apt/sources.list.d/php.list ]; then
+        log_info "PHP仓库已存在，跳过配置"
+        return 0
+    fi
+    
+    log_info "添加Sury PHP仓库..."
+    
+    # 安装必要的依赖
+    if ! DEBIAN_FRONTEND=noninteractive apt-get install -y -qq lsb-release ca-certificates apt-transport-https software-properties-common gnupg2 >> "$INSTALL_LOG" 2>&1; then
+        log_error "安装仓库依赖失败"
+        return 1
+    fi
+    
+    # 添加Sury GPG密钥
+    log_info "添加GPG密钥..."
+    if command_exists "curl"; then
+        curl -sSL https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg 2>> "$INSTALL_LOG"
+    elif command_exists "wget"; then
+        wget -q https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php.gpg 2>> "$INSTALL_LOG"
+    else
+        log_error "无法下载GPG密钥"
+        return 1
+    fi
+    
+    # 添加仓库源
+    log_info "添加仓库源..."
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
+    
+    # 更新软件包列表
+    log_info "更新软件包列表..."
+    if ! apt-get update -qq 2>> "$INSTALL_LOG"; then
+        log_error "更新软件包列表失败"
+        return 1
+    fi
+    
+    log_success "PHP 8.3仓库配置完成"
+    return 0
+}
+
 # 安装软件包
 install_packages() {
-    log_step 7 14 "安装软件包"
+    log_step 8 15 "安装软件包"
     
     log_info "更新软件包列表..."
     if ! apt-get update -qq; then
@@ -511,7 +555,7 @@ install_packages() {
 
 # 安装WP-CLI
 install_wp_cli() {
-    log_step 8 14 "安装WP-CLI"
+    log_step 9 15 "安装WP-CLI"
     
     local wp_cli_path="/usr/local/bin/wp"
     
@@ -535,7 +579,7 @@ install_wp_cli() {
 
 # 配置MariaDB
 configure_mariadb() {
-    log_step 9 14 "配置MariaDB"
+    log_step 10 15 "配置MariaDB"
     
     # 生成随机root密码
     MYSQL_ROOT_PASSWORD=$(generate_random_password 16)
@@ -618,7 +662,7 @@ EOF
 
 # 创建WordPress数据库
 create_wordpress_database() {
-    log_step 10 14 "创建WordPress数据库"
+    log_step 11 15 "创建WordPress数据库"
     
     # 生成随机数据库信息
     DB_NAME="wp_$(generate_random_password 8 | tr -dc 'a-z0-9')"
@@ -650,7 +694,7 @@ EOF
 
 # 配置PHP-FPM
 configure_php_fpm() {
-    log_step 11 14 "配置PHP-FPM"
+    log_step 12 15 "配置PHP-FPM"
     
     local php_conf="/etc/php/8.3/fpm/pool.d/www.conf"
     local php_ini="/etc/php/8.3/fpm/php.ini"
@@ -713,7 +757,7 @@ EOF
 
 # 配置Nginx
 configure_nginx() {
-    log_step 12 14 "配置Nginx"
+    log_step 13 15 "配置Nginx"
     
     # 根据CPU核心数设置worker进程
     local worker_processes=$CPU_CORES
@@ -800,7 +844,7 @@ EOF
 
 # 创建网站目录和设置权限
 create_web_directory() {
-    log_step 13 14 "创建网站目录"
+    log_step 14 15 "创建网站目录"
     
     MAIN_DOMAIN="${DOMAINS[0]}"
     DOMAIN_ROOT=$(extract_domain_root "$MAIN_DOMAIN")
@@ -826,7 +870,7 @@ create_web_directory() {
 
 # 下载和配置WordPress
 install_wordpress() {
-    log_step 14 14 "安装WordPress"
+    log_step 15 15 "安装WordPress"
     
     cd "$WEB_ROOT" || return 1
     
@@ -1413,6 +1457,7 @@ run_installation() {
     create_swap 2048 || exit 1
     get_server_ip || exit 1
     check_dns_resolution || exit 1
+    add_php_repository || exit 1
     install_packages || exit 1
     install_wp_cli || exit 1
     configure_mariadb || exit 1
