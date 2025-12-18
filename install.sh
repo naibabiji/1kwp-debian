@@ -119,8 +119,9 @@ main() {
         exit 1
     fi
     
-    # 收集域名（去重）
-    declare -A domain_map
+    # 收集域名（保持顺序并去重）
+    DOMAINS=()
+    declare -A seen_domains
     for domain in "$@"; do
         # 去除可能的协议前缀和路径
         domain=$(echo "$domain" | sed 's|^https://||; s|^http://||; s|/.*$||')
@@ -129,10 +130,13 @@ main() {
         if ! validate_domain "$domain"; then
             log_warning "域名格式可能不正确: $domain，但仍将继续处理"
         fi
-        domain_map["$domain"]=1
+        
+        # 保持顺序并去重
+        if [[ -z "${seen_domains[$domain]}" ]]; then
+            DOMAINS+=("$domain")
+            seen_domains["$domain"]=1
+        fi
     done
-    
-    DOMAINS=("${!domain_map[@]}")
     
     if [ ${#DOMAINS[@]} -eq 0 ]; then
         log_error "至少需要提供一个有效的域名"
